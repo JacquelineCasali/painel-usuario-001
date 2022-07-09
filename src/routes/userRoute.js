@@ -2,11 +2,17 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/UserController");
 const upload = require("../helpers/multer");
+const userValidator = require("../validators/UserValidator");
 
 // GET localhost:3000/user/create
 router.get("/create", userController.create);
 // POST localhost:3000/user/create
-router.post("/create", upload.single("avatar"), userController.store);
+router.post(
+  "/create",
+  userValidator.storeValidator,
+  upload.single("avatar"),
+  userController.store
+);
 
 // GET localhost:3000/user/edit/1
 router.get("/edit/:id", userController.edit);

@@ -113,15 +113,6 @@ const userController = {
     if (req.file) {
       filename = req.file.filename;
     }
-    if (!nome || !sobrenome || !idade || !email) {
-      return res.render("user-create", {
-        title: "Cadastrar usuário",
-        error: {
-          message: "Preencha todos os campos!",
-        },
-      });
-    }
-
     const newUser = {
       id: users.length + 1,
       nome,
