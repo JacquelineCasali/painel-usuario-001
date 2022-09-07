@@ -26,8 +26,7 @@ header {
   main {
     padding: 0 20px;
   }
-  
-  #user-list table {
+   #user-list table {
     width: 100%;
     font-size: 1.2rem;
   }

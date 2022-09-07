@@ -1,0 +1,27 @@
+<%- include("./partials/head")%>
+
+<%- include("./partials/header")%>
+
+<main id="user-create">
+
+    <h1>Adicionar usuário</h1>
+<% if (locals.error) {%>
+<h2 class="error-alert"><%= error.message%></h2>
+    <%}%>
+
+    <form action="/user/create" method="post">
+        <input type="text" name="name" placeholder="Nome" required/>
+        <input type="text" name="sobrenome" placeholder="Sobrenome" required/>
+        <input type="email" name="email" placeholder="Email" required/>
+        <input type="number" name="idade" placeholder="Idade" required/>
+        <input type="number" name="avatar" placeholder="Numero do Avatar" required/>
+
+        <button type="submit">Adicionar</button>
+
+   
+
+    </form>
+
+
+</main>
+<%- include("./partials/footer")%>

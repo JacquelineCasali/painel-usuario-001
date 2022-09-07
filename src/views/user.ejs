@@ -1,0 +1,28 @@
+<%- include("./partials/head") %>
+<%- include("./partials/header") %>
+
+<main id="user">
+<h1>Visualizar usuário</h1>
+
+<!-- verificação de variavel -->
+<% if(locals.user){ %>
+
+<div>
+        <img src="<%= user.avatar %>" alt="avatar">
+        <span>Nome Sobrenome: <%=user.nome%> <%= user.sobrenome %></span>
+        <span>Email:<%=user.email%></span>
+        <span>Idade: <%=user.idade%></span>
+
+    </div>
+
+<%} else {%>
+
+<h2 class="error-alert">Usuários não encontrado por motivos do alem</h2>
+
+    <%} %>  
+
+</main>
+
+
+
+<%- include("./partials/footer") %>
