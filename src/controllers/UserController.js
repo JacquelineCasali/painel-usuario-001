@@ -1,4 +1,6 @@
+const fs=require("fs")
 const files =require("../helpers/files");
+const upload = require("../config/upload");
 const users = [ 
   {
     id: 1,
@@ -87,25 +89,25 @@ const userController = {
         message: "Usuário não encontrado",
       });
     }
-const user={
-  ...userResult,
-  avatar:files.base64Encode(__dirname + "/../../uploads/" + userResult.avatar),
-}
-
+    const user = {
+      ...userResult,
+      avatar: files.base64Encode(
+        upload.path + userResult.avatar
+      ),
+    };
     return res.render("user", { title: "Visualizar Usuário", user });
   },
   create: (req, res) => {
     return res.render("user-create", { title: "Criar usuário" });
   },
   store: (req, res) => {
-    const { nome, sobrenome, idade,email, avatar } = req.body;
-
-    if (nome || sobrenome ||  idade || email ) {
-      return res.render("user-create", {
-        title: "Criar usuário",
-        error: { message: "Preencha todos os campo" },
-      });
+    const { nome, sobrenome, idade,email } = req.body;
+// filename - nome do arquivo
+    let filename="user-default.jpeg";
+    if(req.file){
+      filename=req.file.filename;
     }
+  
 
     const newUser={
       id: users.length + 1,
@@ -113,7 +115,7 @@ const user={
       sobrenome,
       idade, 
       email, 
-      avatar:"https://i.pravatar.cc/300?img=${avatar}",
+      avatar:filename,
   }
     users.push(newUser)
      
@@ -141,24 +143,33 @@ const user={
   // atualizar
   update: (req, res) => {
     const { id } = req.params;
-    const { nome, sobrenome, email, idade, avatar } = req.body;
+    const { nome, sobrenome, email, idade } = req.body;
     const userResult = users.find((user) => user.id === parseInt(id));
+    let filename;
+    if(req.file){
+      filename=req.file.filename;
+    }
     if (!userResult) {
       return res.render("error", {
         title: "Ops!",
         message: "Nenhum usuário encontrado",
       });
     }
-    const newUser = userResult;
+    const updateUser = userResult;
 
-    if (nome) newUser.nome = nome;
-    if (sobrenome) newUser.sobrenome = sobrenome;
-    if (email) newUser.email = email;
-    if (idade) newUser.idade = idade;
-    if (avatar) newUser.avatar = "https://i.pravatar.cc/300?img=" + avatar;
+    if (nome) updateUser.nome = nome;
+    if (sobrenome) updateUser.sobrenome = sobrenome;
+    if (email) updateUser.email = email;
+    if (idade) updateUser.idade = idade;
+    if (filename) {
+      let avatarTmp=updateUser.avatar;
+    //  unlinkSync deletar arquivos
+      fs.unlinkSync(upload.path + avatarTmp);
+      updateUser.avatar = filename;
+    } 
     return res.render("success", {
       title: "Usuário atualizado",
-      message: `Usuário ${newUser.nome} atualizado com sucesso`,
+      message: `Usuário ${updateUser.nome} foit atualizado`,
     });
   }, 
 
@@ -171,23 +182,34 @@ const user={
         message: "Nenhum usuário encontrado",
       });
     }
+    const user={
+      ...userResult,
+      avatar:files.base64Encode(upload.path+ userResult.avatar),
+    }
+
+
+
     return res.render("user-delete", {
       title: "Deletar usuário",
-      user: userResult,
+      user
     });
   },
+
+
+
   destroy: (req, res) => {
 
     const { id } = req.params;
       const userResult =users.findIndex((user)=>user.id===parseInt(id))
      if(userResult === -1){
-
-     
       return res.render("error", {
         title: "Ops!",
         message: "Nenhum usuário encontrado",
       });
     }
+
+    fs.unlinkSync(upload.path + users[result].avatar);
+
     // splice apagar usuario do array
 users.splice(userResult,1)
 
@@ -195,7 +217,13 @@ return res.render("success",{
   title:"Usuário deletado",
   message: "Usuário deletado com sucesso!"
 })
-}
+},
+
+// salvarCadastro:(req,res)=>{
+//   if(!req.file)
+//   console.log(req.file);
+//   return res.send("deu certo")
+// }
     }
   
   
